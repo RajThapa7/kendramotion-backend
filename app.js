@@ -1,17 +1,18 @@
 const express = require("express");
 const errorHandler = require("./controllers/errorController");
 const AppError = require("./utils/appError");
+const movieRouter = require("./routes/movieRoutes");
+const songRouter = require("./routes/songRoutes");
+const artistProfileRouter = require("./routes/artistProfileRoutes");
 
-const app = express();
 const BASE_URL = "/api/v1";
 
+const app = express();
 app.use(express.json());
 
-app.get(`${BASE_URL}/test`, (_req, res) => {
-  res.json({ message: "Hello World!" });
-});
-
-
+app.use(`${BASE_URL}/movies`, movieRouter);
+app.use(`${BASE_URL}/songs`, songRouter);
+app.use(`${BASE_URL}/artist-profiles`, artistProfileRouter);
 
 app.all("*", (req, _res, next) => {
   const err = new AppError(
