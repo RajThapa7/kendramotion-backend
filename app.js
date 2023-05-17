@@ -11,6 +11,8 @@ app.get(`${BASE_URL}/test`, (_req, res) => {
   res.json({ message: "Hello World!" });
 });
 
+
+
 app.all("*", (req, _res, next) => {
   const err = new AppError(
     `Can't find ${req.originalUrl} on this server!`,
