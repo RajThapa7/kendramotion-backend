@@ -3,6 +3,12 @@ const app = require("./app");
 
 const mongoose = require("mongoose");
 
+process.on("uncaughtException", (err) => {
+  console.log("Uncaught Exception. Shutting down...");
+  console.log(err.name, err.message);
+  process.exit(1);
+});
+
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
@@ -14,6 +20,15 @@ mongoose
   });
 
 // initialize the express server
-app.listen(process.env.PORT, () => {
+const server = app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
+});
+
+process.on("unhandledRejection", (err) => {
+  console.log("Unhandled Rejection. Shutting down...");
+  console.log(err.name, err.message);
+
+  server.close(() => {
+    process.exit(1);
+  });
 });
