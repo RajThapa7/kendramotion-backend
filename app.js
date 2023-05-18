@@ -5,12 +5,14 @@ const movieRouter = require("./routes/movieRoutes");
 const songRouter = require("./routes/songRoutes");
 const artistProfileRouter = require("./routes/artistProfileRoutes");
 const feedbackRouter = require("./routes/feedbackRoutes");
+const authRouter = require("./routes/authRoutes");
 
 const BASE_URL = "/api/v1";
 
 const app = express();
 app.use(express.json());
 
+app.use(`${BASE_URL}`, authRouter);
 app.use(`${BASE_URL}/movie`, movieRouter);
 app.use(`${BASE_URL}/song`, songRouter);
 app.use(`${BASE_URL}/artist-profile`, artistProfileRouter);
