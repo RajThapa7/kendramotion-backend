@@ -6,7 +6,12 @@ const router = express.Router();
 
 router
   .route("/")
-  .post(verifyUser, artistProfileController.createArtistProfile)
-  .get(artistProfileController.getArtistProfiles);
+  .get(artistProfileController.getArtistProfiles)
+  .post(verifyUser, artistProfileController.createArtistProfile);
+
+router
+  .route("/:id")
+  .delete(verifyUser, artistProfileController.deleteArtistProfile)
+  .patch(verifyUser, artistProfileController.updateArtistProfile);
 
 module.exports = router;

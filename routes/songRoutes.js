@@ -6,7 +6,12 @@ const router = express.Router();
 
 router
   .route("/")
-  .post(verifyUser, songController.createSong)
-  .get(songController.getSongs);
+  .get(songController.getSongs)
+  .post(verifyUser, songController.createSong);
+
+router
+  .route("/:id")
+  .delete(verifyUser, songController.deleteSong)
+  .patch(verifyUser, songController.updateSong);
 
 module.exports = router;

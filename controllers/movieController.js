@@ -34,4 +34,32 @@ const createMovie = catchAsync(async (req, res, next) => {
   return res.status(201).json(newMovies);
 });
 
-module.exports = { getMovies, createMovie };
+const deleteMovie = catchAsync(async (req, res, next) => {
+  if (!req.params.id) {
+    const err = new AppError("Id is required", 400);
+    return next(err);
+  }
+
+  const { id } = req.params;
+
+  await Movie.findByIdAndDelete(id);
+
+  res.status(204).json();
+});
+
+const updateMovie = catchAsync(async (req, res, next) => {
+  if (!req.params.id) {
+    const err = new AppError("Id is required", 400);
+    return next(err);
+  }
+
+  const { id } = req.params;
+
+  await Movie.findByIdAndUpdate(id, req.body);
+
+  res
+    .status(200)
+    .json({ status: "success", message: "Movie updated successfully" });
+});
+
+module.exports = { getMovies, createMovie, deleteMovie, updateMovie };

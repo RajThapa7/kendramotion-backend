@@ -33,4 +33,32 @@ const createSong = catchAsync(async (req, res, next) => {
   res.status(201).json(newSongs);
 });
 
-module.exports = { getSongs, createSong };
+const deleteSong = catchAsync(async (req, res, next) => {
+  if (!req.params.id) {
+    const err = new AppError("Id is required", 400);
+    return next(err);
+  }
+
+  const { id } = req.params;
+
+  await Song.findByIdAndDelete(id);
+
+  res.status(204).json();
+});
+
+const updateSong = catchAsync(async (req, res, next) => {
+  if (!req.params.id) {
+    const err = new AppError("Id is required", 400);
+    return next(err);
+  }
+
+  const { id } = req.params;
+
+  await Song.findByIdAndUpdate(id, req.body);
+
+  res
+    .status(200)
+    .json({ status: "success", message: "Song updated successfully" });
+});
+
+module.exports = { getSongs, createSong, deleteSong, updateSong };

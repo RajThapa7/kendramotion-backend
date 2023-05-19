@@ -6,7 +6,12 @@ const router = express.Router();
 
 router
   .route("/")
-  .post(verifyUser, movieController.createMovie)
-  .get(movieController.getMovies);
+  .get(movieController.getMovies)
+  .post(verifyUser, movieController.createMovie);
+
+router
+  .route("/:id")
+  .delete(verifyUser, movieController.deleteMovie)
+  .patch(verifyUser, movieController.updateMovie);
 
 module.exports = router;
