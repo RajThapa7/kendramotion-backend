@@ -6,10 +6,13 @@ const songRouter = require("./routes/songRoutes");
 const artistProfileRouter = require("./routes/artistProfileRoutes");
 const feedbackRouter = require("./routes/feedbackRoutes");
 const authRouter = require("./routes/authRoutes");
+const corsMiddleware = require("./middlewares/corsMiddleware");
 
 const BASE_URL = "/api/v1";
 
 const app = express();
+
+app.use(corsMiddleware());
 app.use(express.json());
 
 app.use(`${BASE_URL}`, authRouter);
