@@ -1,6 +1,21 @@
 const catchAsync = require("../utils/catchAsync");
 const Feedback = require("../models/feedbackModel");
 const AppError = require("../utils/appError");
+const APIFeatures = require("../utils/apiFeatures");
+
+const getFeedbacks = catchAsync(async (req, res) => {
+  const feedbackQuery = Feedback.find();
+
+  const features = new APIFeatures(feedbackQuery, req.query)
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate();
+
+  const feedbacks = await features.query;
+
+  res.status(200).json(feedbacks);
+});
 
 const createFeedback = catchAsync(async (req, res, next) => {
   if (!req.body.name || !req.body.email || !req.body.feedback) {
@@ -13,11 +28,6 @@ const createFeedback = catchAsync(async (req, res, next) => {
   await Feedback.create({ name, email, feedback });
 
   res.status(201).json();
-});
-
-const getFeedbacks = catchAsync(async (req, res) => {
-  const feedbacks = await Feedback.find();
-  res.status(200).json(feedbacks);
 });
 
 module.exports = { createFeedback, getFeedbacks };

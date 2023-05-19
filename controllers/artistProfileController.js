@@ -1,12 +1,20 @@
 const ArtistProfile = require("../models/artistProfileModel");
-const Song = require("../models/songModel");
+const APIFeatures = require("../utils/apiFeatures");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 
 const getArtistProfiles = catchAsync(async (req, res) => {
-  const artistProfiles = await ArtistProfile.find()
+  const artistProfileQuery = ArtistProfile.find()
     .populate("latestRelease.movies")
     .populate("latestRelease.songs");
+
+  const features = new APIFeatures(artistProfileQuery, req.query)
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate();
+
+  const artistProfiles = await features.query;
 
   res.status(200).json(artistProfiles);
 });

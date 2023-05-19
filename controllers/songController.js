@@ -1,9 +1,19 @@
 const Song = require("../models/songModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
+const APIFeatures = require("../utils/apiFeatures");
 
 const getSongs = catchAsync(async (req, res) => {
-  const songs = await Song.find();
+  const songQuery = Song.find();
+
+  const features = new APIFeatures(songQuery, req.query)
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate();
+
+  const songs = await features.query;
+
   res.status(200).json(songs);
 });
 
