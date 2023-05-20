@@ -12,7 +12,7 @@ const getMovies = catchAsync(async (req, res) => {
     .limitFields()
     .paginate();
 
-  const movies = await features.query;
+  const movies = await features.query.populate("artist");
 
   res.status(200).json(movies);
 });
@@ -23,13 +23,14 @@ const createMovie = catchAsync(async (req, res, next) => {
     !req.body.name ||
     !req.body.url ||
     !req.body.thumbImage ||
-    !req.body.position
+    !req.body.position ||
+    !req.body.artist
   ) {
     const error = new AppError("Please provide all the required fields", 400);
     return next(error);
   }
 
-  const { title, name, url, thumbImage, position } = req.body;
+  const { title, name, url, thumbImage, position, artist } = req.body;
 
   await Movie.create({
     title,
@@ -37,6 +38,7 @@ const createMovie = catchAsync(async (req, res, next) => {
     url,
     thumbImage,
     position,
+    artist,
   });
 
   const newMovies = await Movie.find();

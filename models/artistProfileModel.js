@@ -5,16 +5,16 @@ const artistProfileSchema = new mongoose.Schema({
   profileImage: String,
   designation: String,
   position: Number,
-  latestRelease: [
-    {
+  latestRelease: {
+    movies: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Movie",
     },
-    {
+    songs: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Song",
     },
-  ],
+  },
 });
 
 const ArtistProfile = mongoose.model("ArtistProfile", artistProfileSchema);
