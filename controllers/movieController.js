@@ -74,4 +74,17 @@ const updateMovie = catchAsync(async (req, res, next) => {
     .json({ status: "success", message: "Movie updated successfully" });
 });
 
-module.exports = { getMovies, createMovie, deleteMovie, updateMovie };
+const getMovie = catchAsync(async (req, res, next) => {
+  if (!req.params.id) {
+    const err = new AppError("Id is required", 400);
+    return next(err);
+  }
+
+  const { id } = req.params;
+
+  const movie = await Movie.findById(id).populate("artist");
+
+  res.status(200).json(movie);
+});
+
+module.exports = { getMovies, createMovie, deleteMovie, updateMovie, getMovie };

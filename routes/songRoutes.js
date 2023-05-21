@@ -11,6 +11,7 @@ router
 
 router
   .route("/:id")
+  .get(verifyUser, songController.getSong)
   .delete(verifyUser, songController.deleteSong)
   .patch(verifyUser, songController.updateSong);
 

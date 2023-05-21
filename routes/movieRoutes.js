@@ -11,6 +11,7 @@ router
 
 router
   .route("/:id")
+  .get(verifyUser, movieController.getMovie)
   .delete(verifyUser, movieController.deleteMovie)
   .patch(verifyUser, movieController.updateMovie);
 

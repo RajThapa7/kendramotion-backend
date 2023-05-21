@@ -9,4 +9,6 @@ router
   .get(verifyUser, feedbackController.getFeedbacks)
   .post(feedbackController.createFeedback);
 
+router.route("/:id").get(verifyUser, feedbackController.getFeedback);
+
 module.exports = router;

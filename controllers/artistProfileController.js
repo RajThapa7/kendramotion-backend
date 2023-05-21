@@ -64,9 +64,23 @@ const updateArtistProfile = catchAsync(async (req, res, next) => {
   });
 });
 
+const getArtistProfile = catchAsync(async (req, res, next) => {
+  if (!req.params.id) {
+    const err = new AppError("Id is required", 400);
+    return next(err);
+  }
+
+  const { id } = req.params;
+
+  const artistProfile = await ArtistProfile.findById(id);
+
+  res.status(200).json(artistProfile);
+});
+
 module.exports = {
   getArtistProfiles,
   createArtistProfile,
   deleteArtistProfile,
   updateArtistProfile,
+  getArtistProfile,
 };

@@ -30,4 +30,17 @@ const createFeedback = catchAsync(async (req, res, next) => {
   res.status(201).json();
 });
 
-module.exports = { createFeedback, getFeedbacks };
+const getFeedback = catchAsync(async (req, res, next) => {
+  if (!req.params.id) {
+    const error = new AppError("Id is required", 400);
+    return next(error);
+  }
+
+  const { id } = req.params;
+
+  const feedback = await Feedback.findById(id);
+
+  res.status(200).json(feedback);
+});
+
+module.exports = { createFeedback, getFeedbacks, getFeedback };

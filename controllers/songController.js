@@ -71,4 +71,17 @@ const updateSong = catchAsync(async (req, res, next) => {
     .json({ status: "success", message: "Song updated successfully" });
 });
 
-module.exports = { getSongs, createSong, deleteSong, updateSong };
+const getSong = catchAsync(async (req, res, next) => {
+  if (!req.params.id) {
+    const err = new AppError("Id is required", 400);
+    return next(err);
+  }
+
+  const { id } = req.params;
+
+  const song = await Song.findById(id);
+
+  res.status(200).json(song);
+});
+
+module.exports = { getSongs, createSong, deleteSong, updateSong, getSong };
