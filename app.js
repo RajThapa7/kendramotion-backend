@@ -7,6 +7,7 @@ const songRouter = require("./routes/songRoutes");
 const artistProfileRouter = require("./routes/artistProfileRoutes");
 const feedbackRouter = require("./routes/feedbackRoutes");
 const latestWorkRouter = require("./routes/latestWorkRoutes");
+const memberRouter = require("./routes/memberRoutes");
 const authRouter = require("./routes/authRoutes");
 const corsMiddleware = require("./middlewares/corsMiddleware");
 
@@ -24,6 +25,7 @@ app.use(`${BASE_URL}/song`, songRouter);
 app.use(`${BASE_URL}/artist-profile`, artistProfileRouter);
 app.use(`${BASE_URL}/feedback`, feedbackRouter);
 app.use(`${BASE_URL}/latest-work`, latestWorkRouter);
+app.use(`${BASE_URL}/member`, memberRouter);
 
 app.all("*", (req, _res, next) => {
   const err = new AppError(
