@@ -1,23 +1,23 @@
-const Movie = require("../models/movieModel");
+const Video = require("../models/videoModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const APIFeatures = require("../utils/apiFeatures");
 
-const getMovies = catchAsync(async (req, res) => {
-  const movieQuery = Movie.find();
+const getVideos = catchAsync(async (req, res) => {
+  const videoQuery = Video.find();
 
-  const features = new APIFeatures(movieQuery, req.query)
+  const features = new APIFeatures(videoQuery, req.query)
     .filter()
     .sort()
     .limitFields()
     .paginate();
 
-  const movies = await features.query.populate("artist");
+  const videos = await features.query.populate("artist");
 
-  res.status(200).json(movies);
+  res.status(200).json(videos);
 });
 
-const createMovie = catchAsync(async (req, res, next) => {
+const createVideo = catchAsync(async (req, res, next) => {
   if (
     !req.body.title ||
     !req.body.name ||
@@ -31,7 +31,7 @@ const createMovie = catchAsync(async (req, res, next) => {
 
   const { title, name, url, position, artist } = req.body;
 
-  await Movie.create({
+  await Video.create({
     title,
     name,
     url,
@@ -39,12 +39,10 @@ const createMovie = catchAsync(async (req, res, next) => {
     artist,
   });
 
-  const newMovies = await Movie.find();
-
-  return res.status(201).json(newMovies);
+  return res.status(201).json({ message: "Video created successfully" });
 });
 
-const deleteMovie = catchAsync(async (req, res, next) => {
+const deleteVideo = catchAsync(async (req, res, next) => {
   if (!req.params.id) {
     const err = new AppError("Id is required", 400);
     return next(err);
@@ -52,12 +50,12 @@ const deleteMovie = catchAsync(async (req, res, next) => {
 
   const { id } = req.params;
 
-  await Movie.findByIdAndDelete(id);
+  await Video.findByIdAndDelete(id);
 
   res.status(204).json();
 });
 
-const updateMovie = catchAsync(async (req, res, next) => {
+const updateVideo = catchAsync(async (req, res, next) => {
   if (!req.params.id) {
     const err = new AppError("Id is required", 400);
     return next(err);
@@ -65,14 +63,14 @@ const updateMovie = catchAsync(async (req, res, next) => {
 
   const { id } = req.params;
 
-  await Movie.findByIdAndUpdate(id, req.body);
+  await Video.findByIdAndUpdate(id, req.body);
 
   res
     .status(200)
-    .json({ status: "success", message: "Movie updated successfully" });
+    .json({ status: "success", message: "Video updated successfully" });
 });
 
-const getMovie = catchAsync(async (req, res, next) => {
+const getVideo = catchAsync(async (req, res, next) => {
   if (!req.params.id) {
     const err = new AppError("Id is required", 400);
     return next(err);
@@ -80,9 +78,9 @@ const getMovie = catchAsync(async (req, res, next) => {
 
   const { id } = req.params;
 
-  const movie = await Movie.findById(id).populate("artist");
+  const video = await Video.findById(id).populate("artist");
 
-  res.status(200).json(movie);
+  res.status(200).json(video);
 });
 
-module.exports = { getMovies, createMovie, deleteMovie, updateMovie, getMovie };
+module.exports = { getVideos, createVideo, deleteVideo, updateVideo, getVideo };

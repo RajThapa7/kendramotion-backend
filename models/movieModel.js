@@ -4,8 +4,8 @@ const movieSchema = new mongoose.Schema({
   title: String,
   name: String,
   url: String,
-  thumbImage: String,
   position: Number,
+  // TODO: multiple artists
   artist: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "ArtistProfile",

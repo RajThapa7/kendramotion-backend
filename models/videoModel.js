@@ -1,10 +1,9 @@
 const mongoose = require("mongoose");
 
-const songSchema = new mongoose.Schema({
+const videoSchema = new mongoose.Schema({
   title: String,
   name: String,
   url: String,
-  thumbImage: String,
   position: Number,
   artist: {
     type: mongoose.Schema.Types.ObjectId,
@@ -12,6 +11,6 @@ const songSchema = new mongoose.Schema({
   },
 });
 
-const Song = mongoose.model("Song", songSchema);
+const Video = mongoose.model("Video", videoSchema);
 
-module.exports = Song;
+module.exports = Video;

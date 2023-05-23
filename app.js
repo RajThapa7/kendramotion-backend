@@ -2,6 +2,7 @@ const express = require("express");
 const errorHandler = require("./controllers/errorController");
 const AppError = require("./utils/appError");
 const movieRouter = require("./routes/movieRoutes");
+const videoRouter = require("./routes/videoRoutes");
 const songRouter = require("./routes/songRoutes");
 const artistProfileRouter = require("./routes/artistProfileRoutes");
 const feedbackRouter = require("./routes/feedbackRoutes");
@@ -17,6 +18,7 @@ app.use(express.json());
 
 app.use(`${BASE_URL}`, authRouter);
 app.use(`${BASE_URL}/movie`, movieRouter);
+app.use(`${BASE_URL}/video`, videoRouter);
 app.use(`${BASE_URL}/song`, songRouter);
 app.use(`${BASE_URL}/artist-profile`, artistProfileRouter);
 app.use(`${BASE_URL}/feedback`, feedbackRouter);
