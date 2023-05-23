@@ -44,13 +44,13 @@ const sendProdError = (err, res) => {
   }
 };
 
-const errorHandler = (err, _req, res) => {
+const errorHandler = (err, _req, res, _next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "error";
 
   if (process.env.NODE_ENV === "development") {
     sendDevError(err, res);
-  } else if (process.env.NODE_ENV === "production") {
+  } else {
     let error = { ...err, name: err.name, message: err.message };
 
     if (err.name === "CastError") error = handleDBCastError(error);
