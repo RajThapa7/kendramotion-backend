@@ -5,6 +5,10 @@ const videoSchema = new mongoose.Schema({
   name: String,
   url: String,
   position: Number,
+  latest: {
+    type: Boolean,
+    default: false,
+  },
   artist: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "ArtistProfile",

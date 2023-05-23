@@ -28,13 +28,7 @@ const createSong = catchAsync(async (req, res, next) => {
     return next(error);
   }
 
-  const { title, name, url, position } = req.body;
-  await Song.create({
-    title,
-    name,
-    url,
-    position,
-  });
+  await Song.create(req.body);
 
   res.status(201).json({ message: "Song created successfully" });
 });

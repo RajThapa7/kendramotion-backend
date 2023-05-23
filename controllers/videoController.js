@@ -29,15 +29,7 @@ const createVideo = catchAsync(async (req, res, next) => {
     return next(error);
   }
 
-  const { title, name, url, position, artist } = req.body;
-
-  await Video.create({
-    title,
-    name,
-    url,
-    position,
-    artist,
-  });
+  await Video.create(req.body);
 
   return res.status(201).json({ message: "Video created successfully" });
 });
