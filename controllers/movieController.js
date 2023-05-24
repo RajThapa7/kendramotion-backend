@@ -12,7 +12,7 @@ const getMovies = catchAsync(async (req, res) => {
     .limitFields()
     .paginate();
 
-  const movies = await features.query.populate("artist");
+  const movies = await features.query.populate("artists");
 
   res.status(200).json(movies);
 });
@@ -23,25 +23,15 @@ const createMovie = catchAsync(async (req, res, next) => {
     !req.body.name ||
     !req.body.url ||
     !req.body.position ||
-    !req.body.artist
+    !req.body.artists
   ) {
     const error = new AppError("Please provide all the required fields", 400);
     return next(error);
   }
 
-  const { title, name, url, position, artist } = req.body;
+  await Movie.create(req.body);
 
-  await Movie.create({
-    title,
-    name,
-    url,
-    position,
-    artist,
-  });
-
-  const newMovies = await Movie.find();
-
-  return res.status(201).json(newMovies);
+  return res.status(201).json({ message: "Movie created successfully" });
 });
 
 const deleteMovie = catchAsync(async (req, res, next) => {
@@ -80,7 +70,7 @@ const getMovie = catchAsync(async (req, res, next) => {
 
   const { id } = req.params;
 
-  const movie = await Movie.findById(id).populate("artist");
+  const movie = await Movie.findById(id).populate("artists");
 
   res.status(200).json(movie);
 });

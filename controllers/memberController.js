@@ -12,7 +12,7 @@ const getMembers = catchAsync(async (req, res) => {
     .limitFields()
     .paginate();
 
-  const members = await features.query;
+  let members = await features.query;
 
   res.status(200).json(members);
 });

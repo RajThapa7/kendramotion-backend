@@ -43,4 +43,17 @@ const getFeedback = catchAsync(async (req, res, next) => {
   res.status(200).json(feedback);
 });
 
-module.exports = { createFeedback, getFeedbacks, getFeedback };
+const deleteFeedback = catchAsync(async (req, res, next) => {
+  if (!req.params.id) {
+    const error = new AppError("Id is required", 400);
+    return next(error);
+  }
+
+  const { id } = req.params;
+
+  await Feedback.findByIdAndDelete(id);
+
+  res.status(204).json();
+});
+
+module.exports = { createFeedback, getFeedbacks, getFeedback, deleteFeedback };

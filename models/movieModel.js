@@ -5,11 +5,12 @@ const movieSchema = new mongoose.Schema({
   name: String,
   url: String,
   position: Number,
-  // TODO: multiple artists
-  artist: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "ArtistProfile",
-  },
+  artists: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ArtistProfile",
+    },
+  ],
 });
 
 const Movie = mongoose.model("Movie", movieSchema);

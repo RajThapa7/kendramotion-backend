@@ -9,10 +9,12 @@ const videoSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  artist: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "ArtistProfile",
-  },
+  artists: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ArtistProfile",
+    },
+  ],
 });
 
 const Video = mongoose.model("Video", videoSchema);

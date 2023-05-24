@@ -12,7 +12,7 @@ const getVideos = catchAsync(async (req, res) => {
     .limitFields()
     .paginate();
 
-  const videos = await features.query.populate("artist");
+  const videos = await features.query.populate("artists");
 
   res.status(200).json(videos);
 });
@@ -23,7 +23,7 @@ const createVideo = catchAsync(async (req, res, next) => {
     !req.body.name ||
     !req.body.url ||
     !req.body.position ||
-    !req.body.artist
+    !req.body.artists
   ) {
     const error = new AppError("Please provide all the required fields", 400);
     return next(error);
@@ -70,7 +70,7 @@ const getVideo = catchAsync(async (req, res, next) => {
 
   const { id } = req.params;
 
-  const video = await Video.findById(id).populate("artist");
+  const video = await Video.findById(id).populate("artists");
 
   res.status(200).json(video);
 });
