@@ -1,5 +1,6 @@
 require("dotenv").config();
 const app = require("./app");
+const cloudinary = require("cloudinary").v2;
 
 const mongoose = require("mongoose");
 
@@ -7,6 +8,12 @@ process.on("uncaughtException", (err) => {
   console.log("Uncaught Exception. Shutting down...");
   console.log(err.name, err.message);
   process.exit(1);
+});
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 mongoose
