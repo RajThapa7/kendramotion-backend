@@ -10,6 +10,7 @@ const latestWorkRouter = require("./routes/latestWorkRoutes");
 const memberRouter = require("./routes/memberRoutes");
 const submissionRouter = require("./routes/submissionRoutes");
 const authRouter = require("./routes/authRoutes");
+const bannerRouter = require("./routes/bannerRoutes");
 const corsMiddleware = require("./middlewares/corsMiddleware");
 
 const BASE_URL = "/api/v1";
@@ -28,6 +29,7 @@ app.use(`${BASE_URL}/feedback`, feedbackRouter);
 app.use(`${BASE_URL}/latest-work`, latestWorkRouter);
 app.use(`${BASE_URL}/member`, memberRouter);
 app.use(`${BASE_URL}/submission`, submissionRouter);
+app.use(`${BASE_URL}/banner`, bannerRouter);
 
 app.all("*", (req, _res, next) => {
   const err = new AppError(
