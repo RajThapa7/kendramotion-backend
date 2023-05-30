@@ -9,6 +9,10 @@ const bannerSchema = new mongoose.Schema({
     type: String,
     required: [true, "Banner url is required"],
   },
+  publicId: {
+    type: String,
+    required: [true, "Banner publicId is required"],
+  },
 });
 
 const Banner = mongoose.model("Banner", bannerSchema);
