@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const bannerSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: [true, "Banner title is required"],
+  },
   name: {
     type: String,
     required: [true, "Banner name is required"],
@@ -9,9 +13,13 @@ const bannerSchema = new mongoose.Schema({
     type: String,
     required: [true, "Banner url is required"],
   },
-  publicId: {
+  type: {
     type: String,
-    required: [true, "Banner publicId is required"],
+    required: [true, "Banner type is required"],
+  },
+  size: {
+    type: Number,
+    required: [true, "Banner size is required"],
   },
 });
 

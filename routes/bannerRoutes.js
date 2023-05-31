@@ -9,9 +9,15 @@ const upload = multer({ dest: `${__dirname}/../assets/banners/` });
 router
   .route("/")
   .get(bannerController.getBanners)
-  .post(verifyUser, upload.single("banner"), bannerController.createBanner)
-  .delete(verifyUser, bannerController.deleteBanner);
+  .post(verifyUser, bannerController.createBanner);
 
-router.route("/:id").get(bannerController.getBanner);
+router
+  .route("/upload")
+  .post(verifyUser, upload.single("banner"), bannerController.uploadBanner);
+
+router
+  .route("/:id")
+  .get(bannerController.getBanner)
+  .delete(verifyUser, bannerController.deleteBanner);
 
 module.exports = router;

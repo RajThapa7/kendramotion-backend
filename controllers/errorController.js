@@ -19,6 +19,7 @@ const handleDBValidationError = (err) => {
 };
 
 const sendDevError = (err, res) => {
+  console.log("SENDING DEV ERROR");
   res.status(err.statusCode).json({
     status: err.status,
     error: err,
@@ -44,9 +45,12 @@ const sendProdError = (err, res) => {
   }
 };
 
-const errorHandler = (err, _req, res) => {
+// error handler must have 4 parameters
+const errorHandler = (err, _req, res, _next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "error";
+
+  console.log("ERROR HANDLER");
 
   if (process.env.NODE_ENV === "development") {
     sendDevError(err, res);

@@ -6,36 +6,19 @@ const Banner = require("../models/bannerModel");
 const APIFeatures = require("../utils/apiFeatures");
 
 const createBanner = catchAsync(async (req, res, next) => {
-  if (!req.file) {
-    const error = new AppError("Please upload a file", 400);
+  const image = req.body.image;
+
+  if (!image?.url || !image?.name || !image?.type || !image?.size) {
+    const error = new AppError(
+      "Please provide a url, name, type, and size",
+      400
+    );
     return next(error);
   }
 
-  if (!req.body.name) {
-    const error = new AppError("Please provide a banner name", 400);
-    return next(error);
-  }
+  await Banner.create({ ...image, title: req.body.title });
 
-  const { path, filename } = req.file;
-
-  try {
-    const response = await cloudinary.uploader.upload(path, {
-      public_id: filename,
-      folder: "banners",
-    });
-
-    await Banner.create({
-      name: req.body.name,
-      url: response.secure_url,
-      publicId: response.public_id,
-    });
-
-    res.status(201).json();
-  } catch (err) {
-    fs.unlinkSync(path);
-    const error = new AppError(err, 500);
-    return next(error);
-  }
+  res.status(201).json();
 });
 
 const getBanners = catchAsync(async (req, res) => {
@@ -70,14 +53,23 @@ const getBanner = catchAsync(async (req, res, next) => {
 });
 
 const deleteBanner = catchAsync(async (req, res, next) => {
-  if (!req.query.public_id) {
-    const error = new AppError("Please provide a public id", 400);
+  if (!req.params.id) {
+    const error = new AppError("Please provide a banner id", 400);
     return next(error);
   }
 
+  const deletedBanner = await Banner.findByIdAndDelete(req.params.id);
+
+  const url = deletedBanner.url;
+  const splitUrl = url.split("/"); // split the url into an array
+
+  // get the publicId from the url (banners/344856823748.jpg)
+  const imageId = splitUrl[splitUrl.length - 1];
+  const imageFolder = splitUrl[splitUrl.length - 2];
+  const publicId = `${imageFolder}/${imageId}`;
+
   try {
-    await cloudinary.uploader.destroy(req.query.public_id);
-    await Banner.deleteOne({ publicId: req.query.public_id });
+    await cloudinary.uploader.destroy(publicId || "");
     res.status(204).json();
   } catch (err) {
     const error = new AppError(err, 500);
@@ -85,4 +77,32 @@ const deleteBanner = catchAsync(async (req, res, next) => {
   }
 });
 
-module.exports = { createBanner, getBanners, getBanner, deleteBanner };
+const uploadBanner = catchAsync(async (req, res, next) => {
+  if (!req.file) {
+    const error = new AppError("Please upload a file", 400);
+    return next(error);
+  }
+
+  const { path, filename } = req.file;
+
+  try {
+    const response = await cloudinary.uploader.upload(path, {
+      public_id: filename,
+      folder: "banners",
+    });
+
+    res.status(201).json({ url: response.secure_url });
+  } catch (err) {
+    fs.unlinkSync(path);
+    const error = new AppError(err, 500);
+    return next(error);
+  }
+});
+
+module.exports = {
+  createBanner,
+  getBanners,
+  getBanner,
+  deleteBanner,
+  uploadBanner,
+};
