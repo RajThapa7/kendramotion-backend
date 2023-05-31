@@ -21,6 +21,10 @@ const bannerSchema = new mongoose.Schema({
     type: Number,
     required: [true, "Banner size is required"],
   },
+  roadBlock: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const Banner = mongoose.model("Banner", bannerSchema);

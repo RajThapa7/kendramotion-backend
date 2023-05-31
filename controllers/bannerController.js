@@ -16,7 +16,13 @@ const createBanner = catchAsync(async (req, res, next) => {
     return next(error);
   }
 
-  await Banner.create({ ...image, title: req.body.title });
+  const roadBlock = req.body.roadBlock;
+
+  await Banner.create({
+    ...image,
+    title: req.body.title,
+    ...(roadBlock && { roadBlock }),
+  });
 
   res.status(201).json();
 });
@@ -99,10 +105,25 @@ const uploadBanner = catchAsync(async (req, res, next) => {
   }
 });
 
+const editBanner = catchAsync(async (req, res, next) => {
+  if (!req.params.id) {
+    const error = new AppError("Please provide a banner id", 400);
+    return next(error);
+  }
+
+  await Banner.findByIdAndUpdate(req.params.id, req.body);
+
+  res.status(200).json({
+    status: "success",
+    message: "Banner updated successfully",
+  });
+});
+
 module.exports = {
   createBanner,
   getBanners,
   getBanner,
   deleteBanner,
   uploadBanner,
+  editBanner,
 };

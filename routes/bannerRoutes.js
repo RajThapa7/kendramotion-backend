@@ -18,6 +18,7 @@ router
 router
   .route("/:id")
   .get(bannerController.getBanner)
-  .delete(verifyUser, bannerController.deleteBanner);
+  .delete(verifyUser, bannerController.deleteBanner)
+  .patch(verifyUser, bannerController.editBanner);
 
 module.exports = router;
