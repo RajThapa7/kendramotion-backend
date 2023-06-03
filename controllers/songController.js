@@ -9,8 +9,7 @@ const getSongs = catchAsync(async (req, res) => {
   const features = new APIFeatures(songQuery, req.query)
     .filter()
     .sort()
-    .limitFields()
-    .paginate();
+    .limitFields();
 
   const songs = await features.query;
 

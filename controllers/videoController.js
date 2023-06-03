@@ -9,12 +9,13 @@ const getVideos = catchAsync(async (req, res) => {
   const features = new APIFeatures(videoQuery, req.query)
     .filter()
     .sort()
-    .limitFields()
-    .paginate();
+    .limitFields();
 
   const videos = await features.query.populate("artists");
+  const totalCount = await Video.countDocuments();
 
-  res.status(200).json(videos);
+  // res.status(200).json(videos);
+  res.status(200).json({ data: videos, totalCount });
 });
 
 const createVideo = catchAsync(async (req, res, next) => {

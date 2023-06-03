@@ -10,14 +10,12 @@ const getLatestWorks = catchAsync(async (req, res) => {
   const songFeatures = new APIFeatures(songQuery, req.query)
     .filter()
     .sort()
-    .limitFields()
-    .paginate();
+    .limitFields();
 
   const videoFeatures = new APIFeatures(videoQuery, req.query)
     .filter()
     .sort()
-    .limitFields()
-    .paginate();
+    .limitFields();
 
   const songs = await songFeatures.query;
   const videos = await videoFeatures.query;

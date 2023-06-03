@@ -11,8 +11,7 @@ const getArtistProfiles = catchAsync(async (req, res) => {
   const features = new APIFeatures(artistProfileQuery, req.query)
     .filter()
     .sort()
-    .limitFields()
-    .paginate();
+    .limitFields();
 
   const artistProfiles = await features.query;
 

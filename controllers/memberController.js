@@ -9,8 +9,7 @@ const getMembers = catchAsync(async (req, res) => {
   const features = new APIFeatures(memberQuery, req.query)
     .filter()
     .sort()
-    .limitFields()
-    .paginate();
+    .limitFields();
 
   let members = await features.query;
 

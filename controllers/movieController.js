@@ -9,8 +9,7 @@ const getMovies = catchAsync(async (req, res) => {
   const features = new APIFeatures(movieQuery, req.query)
     .filter()
     .sort()
-    .limitFields()
-    .paginate();
+    .limitFields();
 
   const movies = await features.query.populate("artists");
 

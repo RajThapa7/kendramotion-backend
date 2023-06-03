@@ -33,8 +33,7 @@ const getBanners = catchAsync(async (req, res) => {
   const features = new APIFeatures(bannerQuery, req.query)
     .filter()
     .sort()
-    .limitFields()
-    .paginate();
+    .limitFields();
 
   const banners = await features.query;
 
