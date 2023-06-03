@@ -3,7 +3,7 @@ const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const APIFeatures = require("../utils/apiFeatures");
 
-const getMovies = catchAsync(async (req, res, next) => {
+const getMovies = catchAsync(async (req, res) => {
   const movieQuery = Movie.find();
 
   const features = new APIFeatures(movieQuery, req.query)
@@ -12,8 +12,6 @@ const getMovies = catchAsync(async (req, res, next) => {
     .limitFields();
 
   const movies = await features.query.populate("artists");
-
-  return next(new AppError("This is a test error", 400));
 
   res.status(200).json(movies);
 });
