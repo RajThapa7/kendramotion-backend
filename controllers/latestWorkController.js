@@ -1,13 +1,13 @@
-const Song = require("../models/songModel");
+const Movie = require("../models/movieModel");
 const Video = require("../models/videoModel");
 const APIFeatures = require("../utils/apiFeatures");
 const catchAsync = require("../utils/catchAsync");
 
 const getLatestWorks = catchAsync(async (req, res) => {
-  const songQuery = Song.find({ latest: true });
+  const movieQuery = Movie.find({ latest: true });
   const videoQuery = Video.find({ latest: true });
 
-  const songFeatures = new APIFeatures(songQuery, req.query)
+  const movieFeatures = new APIFeatures(movieQuery, req.query)
     .filter()
     .sort()
     .limitFields();
@@ -17,10 +17,10 @@ const getLatestWorks = catchAsync(async (req, res) => {
     .sort()
     .limitFields();
 
-  const songs = await songFeatures.query;
+  const movies = await movieFeatures.query;
   const videos = await videoFeatures.query;
 
-  const latestWork = [...songs, ...videos];
+  const latestWork = [...movies, ...videos];
 
   res.status(200).json(latestWork);
 });

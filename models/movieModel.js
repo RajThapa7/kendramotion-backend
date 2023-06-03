@@ -5,6 +5,10 @@ const movieSchema = new mongoose.Schema({
   name: String,
   url: String,
   position: Number,
+  latest: {
+    type: Boolean,
+    default: false,
+  },
   artists: [
     {
       type: mongoose.Schema.Types.ObjectId,
