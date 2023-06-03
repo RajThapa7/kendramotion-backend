@@ -12,10 +12,8 @@ const getVideos = catchAsync(async (req, res) => {
     .limitFields();
 
   const videos = await features.query.populate("artists");
-  const totalCount = await Video.countDocuments();
 
-  // res.status(200).json(videos);
-  res.status(200).json({ data: videos, totalCount });
+  res.status(200).json(videos);
 });
 
 const createVideo = catchAsync(async (req, res, next) => {
