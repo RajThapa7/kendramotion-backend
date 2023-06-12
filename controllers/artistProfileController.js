@@ -2,6 +2,8 @@ const ArtistProfile = require("../models/artistProfileModel");
 const APIFeatures = require("../utils/apiFeatures");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
+const cloudinary = require("cloudinary").v2;
+const fs = require("fs");
 
 const getArtistProfiles = catchAsync(async (req, res) => {
   const artistProfileQuery = ArtistProfile.find()
@@ -44,15 +46,21 @@ const getArtistLatestReleases = catchAsync(async (req, res, next) => {
   res.status(200).json(latestRelease);
 });
 
-const createArtistProfile = catchAsync(async (req, res) => {
-  const { name, profileImage, designation, position, latestRelease } = req.body;
+const createArtistProfile = catchAsync(async (req, res, next) => {
+  const image = req.body.image;
+
+  if (!image?.url) {
+    const error = new AppError("Please provide an image url", 400);
+    return next(error);
+  }
+  const { name, designation, position, latestRelease } = req.body;
 
   await ArtistProfile.create({
     name,
-    profileImage,
     designation,
     position,
     latestRelease,
+    profileImage: image.url,
   });
 
   res.status(201).json({
@@ -69,9 +77,23 @@ const deleteArtistProfile = catchAsync(async (req, res, next) => {
 
   const { id } = req.params;
 
-  await ArtistProfile.findByIdAndDelete(id);
+  const deletedArtist = await ArtistProfile.findByIdAndDelete(id);
 
-  res.status(204).json();
+  const url = deletedArtist.profileImage;
+  const splitUrl = url.split("/"); // split the url into an array
+
+  // get the publicId from the url (profile/344856823748.jpg)
+  const imageId = splitUrl[splitUrl.length - 1];
+  const imageFolder = splitUrl[splitUrl.length - 2];
+  const publicId = `${imageFolder}/${imageId}`;
+
+  try {
+    await cloudinary.uploader.destroy(publicId || "");
+    res.status(204).json();
+  } catch (err) {
+    const error = new AppError(err, 500);
+    return next(error);
+  }
 });
 
 const updateArtistProfile = catchAsync(async (req, res, next) => {
@@ -80,9 +102,34 @@ const updateArtistProfile = catchAsync(async (req, res, next) => {
     return next(err);
   }
 
-  const { id } = req.params;
+  const image = req.body.image;
+  if (!image?.url) {
+    const error = new AppError("Please provide an image url", 400);
+    return next(error);
+  }
 
-  await ArtistProfile.findByIdAndUpdate(id, req.body);
+  const { id } = req.params;
+  const previousArtist = await ArtistProfile.findByIdAndUpdate(id, {
+    ...req.body,
+    profileImage: image.url,
+  });
+
+  // delete the previous image from cloudinary
+  const url = previousArtist.profileImage;
+  const splitUrl = url.split("/"); // split the url into an array
+
+  // get the publicId from the url (profile/344856823748.jpg)
+  const imageId = splitUrl[splitUrl.length - 1];
+  const imageFolder = splitUrl[splitUrl.length - 2];
+  const publicId = `${imageFolder}/${imageId}`;
+
+  try {
+    await cloudinary.uploader.destroy(publicId || "");
+    res.status(204).json();
+  } catch (err) {
+    const error = new AppError(err, 500);
+    return next(error);
+  }
 
   res.status(200).json({
     status: "success",
@@ -103,6 +150,28 @@ const getArtistProfile = catchAsync(async (req, res, next) => {
   res.status(200).json(artistProfile);
 });
 
+const uploadProfile = catchAsync(async (req, res, next) => {
+  if (!req.file) {
+    const error = new AppError("Please upload a file", 400);
+    return next(error);
+  }
+
+  const { path, filename } = req.file;
+
+  try {
+    const response = await cloudinary.uploader.upload(path, {
+      public_id: filename,
+      folder: "profile",
+    });
+
+    res.status(201).json({ url: response.secure_url });
+  } catch (err) {
+    fs.unlinkSync(path);
+    const error = new AppError(err, 500);
+    return next(error);
+  }
+});
+
 module.exports = {
   getArtistProfiles,
   createArtistProfile,
@@ -110,4 +179,5 @@ module.exports = {
   updateArtistProfile,
   getArtistProfile,
   getArtistLatestReleases,
+  uploadProfile,
 };

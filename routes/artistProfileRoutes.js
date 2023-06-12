@@ -1,8 +1,11 @@
 const express = require("express");
 const artistProfileController = require("../controllers/artistProfileController");
 const { verifyUser } = require("../middlewares/authMiddleware");
+const multer = require("multer");
 
 const router = express.Router();
+
+const upload = multer({ dest: `${__dirname}/../assets/profile/` });
 
 router
   .route("/")
@@ -12,6 +15,14 @@ router
 router
   .route("/latest/:id")
   .get(artistProfileController.getArtistLatestReleases);
+
+router
+  .route("/upload")
+  .post(
+    verifyUser,
+    upload.single("profile"),
+    artistProfileController.uploadProfile
+  );
 
 router
   .route("/:id")
