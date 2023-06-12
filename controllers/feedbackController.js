@@ -26,7 +26,9 @@ const createFeedback = catchAsync(async (req, res, next) => {
 
   await Feedback.create({ name, email, feedback });
 
-  res.status(201).json();
+  res
+    .status(201)
+    .json({ status: "success", message: "Feedback created successfully" });
 });
 
 const getFeedback = catchAsync(async (req, res, next) => {

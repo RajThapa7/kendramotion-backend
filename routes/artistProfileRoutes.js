@@ -10,6 +10,10 @@ router
   .post(verifyUser, artistProfileController.createArtistProfile);
 
 router
+  .route("/latest/:id")
+  .get(artistProfileController.getArtistLatestReleases);
+
+router
   .route("/:id")
   .delete(verifyUser, artistProfileController.deleteArtistProfile)
   .get(verifyUser, artistProfileController.getArtistProfile)

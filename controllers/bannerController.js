@@ -24,7 +24,9 @@ const createBanner = catchAsync(async (req, res, next) => {
     ...(roadBlock && { roadBlock }),
   });
 
-  res.status(201).json();
+  res
+    .status(201)
+    .json({ status: "success", message: "Banner created successfully" });
 });
 
 const getBanners = catchAsync(async (req, res) => {

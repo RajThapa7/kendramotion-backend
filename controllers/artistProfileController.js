@@ -18,6 +18,32 @@ const getArtistProfiles = catchAsync(async (req, res) => {
   res.status(200).json(artistProfiles);
 });
 
+const getArtistLatestReleases = catchAsync(async (req, res, next) => {
+  if (!req.params.id) {
+    const err = new AppError("Id is required", 400);
+    return next(err);
+  }
+
+  const { id } = req.params;
+  let artist = await ArtistProfile.findById(id)
+    .populate("latestRelease.songs")
+    .populate("latestRelease.movies");
+
+  const latestMovies = artist.latestRelease.movies.filter(
+    (movie) => movie.latest === true
+  );
+  const latestSongs = artist.latestRelease.songs.filter(
+    (song) => song.latest === true
+  );
+
+  artist.latestRelease.movies = latestMovies;
+  artist.latestRelease.songs = latestSongs;
+
+  const latestRelease = { movies: latestMovies, songs: latestSongs };
+
+  res.status(200).json(latestRelease);
+});
+
 const createArtistProfile = catchAsync(async (req, res) => {
   const { name, profileImage, designation, position, latestRelease } = req.body;
 
@@ -29,9 +55,10 @@ const createArtistProfile = catchAsync(async (req, res) => {
     latestRelease,
   });
 
-  const artistProfiles = await ArtistProfile.find();
-
-  res.status(201).json(artistProfiles);
+  res.status(201).json({
+    status: "success",
+    message: "Artist profile created successfully",
+  });
 });
 
 const deleteArtistProfile = catchAsync(async (req, res, next) => {
@@ -82,4 +109,5 @@ module.exports = {
   deleteArtistProfile,
   updateArtistProfile,
   getArtistProfile,
+  getArtistLatestReleases,
 };
