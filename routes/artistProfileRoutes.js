@@ -27,7 +27,7 @@ router
 router
   .route("/:id")
   .delete(verifyUser, artistProfileController.deleteArtistProfile)
-  .get(verifyUser, artistProfileController.getArtistProfile)
+  .get(artistProfileController.getArtistProfile)
   .patch(verifyUser, artistProfileController.updateArtistProfile);
 
 module.exports = router;
