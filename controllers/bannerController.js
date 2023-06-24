@@ -4,6 +4,7 @@ const cloudinary = require("cloudinary").v2;
 const fs = require("fs");
 const Banner = require("../models/bannerModel");
 const APIFeatures = require("../utils/apiFeatures");
+const { getPublicIdFromURL } = require("../utils/cloudinaryUtil");
 
 const createBanner = catchAsync(async (req, res, next) => {
   const image = req.body.image;
@@ -66,22 +67,14 @@ const deleteBanner = catchAsync(async (req, res, next) => {
   }
 
   const deletedBanner = await Banner.findByIdAndDelete(req.params.id);
+  const publicId = getPublicIdFromURL(deletedBanner.url);
 
-  const url = deletedBanner.url;
-  const splitUrl = url.split("/"); // split the url into an array
+  await cloudinary.uploader.destroy(publicId, {
+    resource_type: "image",
+    invalidate: true,
+  });
 
-  // get the publicId from the url (banners/344856823748.jpg)
-  const imageId = splitUrl[splitUrl.length - 1];
-  const imageFolder = splitUrl[splitUrl.length - 2];
-  const publicId = `${imageFolder}/${imageId}`;
-
-  try {
-    await cloudinary.uploader.destroy(publicId || "");
-    res.status(204).json();
-  } catch (err) {
-    const error = new AppError(err, 500);
-    return next(error);
-  }
+  res.status(204).json();
 });
 
 const uploadBanner = catchAsync(async (req, res, next) => {
@@ -97,7 +90,7 @@ const uploadBanner = catchAsync(async (req, res, next) => {
       public_id: filename,
       folder: "banners",
     });
-
+    fs.unlinkSync(path);
     res.status(201).json({ url: response.secure_url });
   } catch (err) {
     fs.unlinkSync(path);

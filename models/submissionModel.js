@@ -13,9 +13,19 @@ const submissionSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please provide an email"],
   },
-  videoUrl: {
-    type: String,
-    required: [true, "Please provide a video url"],
+  document: {
+    url: { type: String, required: [true, "Please provide a document url"] },
+    publicId: {
+      type: String,
+      required: [true, "Please provide a document publicId"],
+    },
+  },
+  video: {
+    url: { type: String, required: [true, "Please provide a video url"] },
+    publicId: {
+      type: String,
+      required: [true, "Please provide a video publicId"],
+    },
   },
 });
 

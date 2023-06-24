@@ -4,6 +4,7 @@ const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const cloudinary = require("cloudinary").v2;
 const fs = require("fs");
+const { getPublicIdFromURL } = require("../utils/cloudinaryUtil");
 
 const getArtistProfiles = catchAsync(async (req, res) => {
   const artistProfileQuery = ArtistProfile.find()
@@ -79,21 +80,11 @@ const deleteArtistProfile = catchAsync(async (req, res, next) => {
 
   const deletedArtist = await ArtistProfile.findByIdAndDelete(id);
 
-  const url = deletedArtist.profileImage;
-  const splitUrl = url.split("/"); // split the url into an array
+  const publicId = getPublicIdFromURL(deletedArtist.profileImage);
 
-  // get the publicId from the url (profile/344856823748.jpg)
-  const imageId = splitUrl[splitUrl.length - 1];
-  const imageFolder = splitUrl[splitUrl.length - 2];
-  const publicId = `${imageFolder}/${imageId}`;
+  await cloudinary.uploader.destroy(publicId);
 
-  try {
-    await cloudinary.uploader.destroy(publicId || "");
-    res.status(204).json();
-  } catch (err) {
-    const error = new AppError(err, 500);
-    return next(error);
-  }
+  res.status(204).json();
 });
 
 const updateArtistProfile = catchAsync(async (req, res, next) => {
@@ -114,22 +105,10 @@ const updateArtistProfile = catchAsync(async (req, res, next) => {
     profileImage: image.url,
   });
 
-  // delete the previous image from cloudinary
-  const url = previousArtist.profileImage;
-  const splitUrl = url.split("/"); // split the url into an array
+  // delete the previous image from cloudinary since new image is already uploaded
+  const publicId = getPublicIdFromURL(previousArtist.profileImage);
 
-  // get the publicId from the url (profile/344856823748.jpg)
-  const imageId = splitUrl[splitUrl.length - 1];
-  const imageFolder = splitUrl[splitUrl.length - 2];
-  const publicId = `${imageFolder}/${imageId}`;
-
-  try {
-    await cloudinary.uploader.destroy(publicId || "");
-    res.status(204).json();
-  } catch (err) {
-    const error = new AppError(err, 500);
-    return next(error);
-  }
+  await cloudinary.uploader.destroy(publicId);
 
   res.status(200).json({
     status: "success",
@@ -163,6 +142,7 @@ const uploadProfile = catchAsync(async (req, res, next) => {
       public_id: filename,
       folder: "profile",
     });
+    fs.unlinkSync(path);
 
     res.status(201).json({ url: response.secure_url });
   } catch (err) {
