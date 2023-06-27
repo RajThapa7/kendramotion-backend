@@ -81,7 +81,6 @@ const deleteArtistProfile = catchAsync(async (req, res, next) => {
   const deletedArtist = await ArtistProfile.findByIdAndDelete(id);
 
   const publicId = getPublicIdFromURL(deletedArtist.profileImage);
-
   await cloudinary.uploader.destroy(publicId);
 
   res.status(204).json();
